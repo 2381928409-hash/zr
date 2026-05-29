@@ -188,6 +188,60 @@ body::after {
   opacity: 0; transform: rotate(-90deg) scale(0.5);
 }
 
+/* ── Timer Toggle ────────────────────────────────── */
+.header__timer-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  position: relative;
+  overflow: visible;
+}
+
+.header__timer-toggle:hover {
+  background: var(--surface-hover);
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.header__timer-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.header__timer-toggle.timer-toggle--running {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.header__timer-toggle .timer-toggle-ring {
+  position: absolute;
+  inset: -3px;
+  width: 46px;
+  height: 46px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.header__timer-toggle .timer-toggle-ring circle {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 119.38;
+  stroke-dashoffset: 119.38;
+  transition: stroke-dashoffset 0.5s linear;
+  opacity: 0.7;
+}
+
 /* ── Panel ───────────────────────────────────────── */
 .panel {
   background: var(--surface);
@@ -805,6 +859,240 @@ body::after {
   100% { transform: scale(1); }
 }
 
+/* ── Timer Panel ─────────────────────────────────── */
+.timer-panel {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  margin-top: 16px;
+  overflow: hidden;
+  transition: all var(--transition-slow);
+  animation: timerSlideIn 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  position: relative;
+}
+
+.timer-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.4;
+  z-index: 2;
+}
+
+.timer-panel.timer-panel--complete {
+  animation: timerPulse 0.6s ease-in-out 3;
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md), 0 0 40px var(--accent-glow);
+}
+
+.timer-panel__inner {
+  padding: 24px 20px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Mode Tabs */
+.timer-panel__mode-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--bg);
+  border-radius: 20px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.timer-panel__mode-tab {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 7px 10px;
+  border-radius: 18px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.timer-panel__mode-tab:hover {
+  color: var(--text-secondary);
+}
+
+.timer-panel__mode-tab--active {
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: var(--shadow-sm);
+  font-weight: 500;
+}
+
+/* Ring Container */
+.timer-panel__ring-container {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 20px;
+}
+
+.timer-panel__ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-ring-bg {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 4;
+}
+
+.timer-ring-progress {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 565.49;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.3s linear;
+}
+
+.timer-panel__time {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', var(--font-mono);
+  font-size: 2.6rem;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: 0.04em;
+  transition: color var(--transition-slow);
+}
+
+.timer-panel__label {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  transition: color var(--transition-slow);
+}
+
+/* Controls */
+.timer-panel__controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+
+.timer-panel__btn {
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.timer-panel__btn--primary {
+  width: 56px;
+  height: 56px;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+.timer-panel__btn--primary:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 20px var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+.timer-panel__btn--primary:active {
+  transform: scale(0.94);
+  transition: transform 0.1s ease;
+}
+
+.timer-panel__btn--secondary {
+  width: 42px;
+  height: 42px;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.timer-panel__btn--secondary:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.timer-btn-icon {
+  line-height: 1;
+}
+
+.timer-btn-label {
+  display: none;
+}
+
+/* Sessions */
+.timer-panel__sessions {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-size: 0.85rem;
+  min-height: 24px;
+  align-items: center;
+}
+
+.timer-panel__sessions span {
+  opacity: 0.3;
+  transition: opacity var(--transition);
+}
+
+.timer-panel__sessions span.done {
+  opacity: 1;
+}
+
+/* Timer Panel closing animation */
+.timer-panel--hiding {
+  animation: timerSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes timerSlideIn {
+  from { opacity: 0; transform: translateY(-12px); max-height: 0; }
+  to { opacity: 1; transform: translateY(0); max-height: 500px; }
+}
+
+@keyframes timerSlideOut {
+  from { opacity: 1; transform: translateY(0); max-height: 500px; }
+  to { opacity: 0; transform: translateY(-12px); max-height: 0; }
+}
+
+@keyframes timerPulse {
+  0%, 100% { box-shadow: var(--shadow-md), 0 0 20px var(--accent-glow); }
+  50% { box-shadow: var(--shadow-md), 0 0 50px var(--accent-glow), 0 0 80px var(--accent-glow); }
+}
+
 /* ── Responsive ──────────────────────────────────── */
 @media (max-width: 520px) {
   body { padding: 24px 12px 60px; }
@@ -829,6 +1117,11 @@ body::after {
 
   .modal { padding: 22px; }
   .modal h3 { font-size: 1.25rem; }
+
+  .timer-panel__inner { padding: 18px 14px 16px; }
+  .timer-panel__ring-container { width: 150px; height: 150px; }
+  .timer-panel__time { font-size: 2.2rem; }
+  .timer-panel__label { bottom: 24px; font-size: 0.7rem; }
 }
 
 /* ── Scrollbar ───────────────────────────────────── */
@@ -856,7 +1149,42 @@ body::after {
         <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
       </svg>
     </button>
+    <button class="header__timer-toggle" id="timerToggle" title="番茄钟" aria-label="打开番茄钟">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="13" r="8"/>
+        <polyline points="12 7 12 13 15 15"/>
+        <line x1="12" y1="4" x2="12" y2="2"/>
+      </svg>
+    </button>
   </header>
+
+  <div class="timer-panel" id="timerPanel" style="display:none">
+    <div class="timer-panel__inner">
+      <div class="timer-panel__mode-tabs">
+        <button class="timer-panel__mode-tab timer-panel__mode-tab--active" data-mode="focus">🍅 专注</button>
+        <button class="timer-panel__mode-tab" data-mode="shortBreak">☕ 短休</button>
+        <button class="timer-panel__mode-tab" data-mode="longBreak">🌿 长休</button>
+      </div>
+      <div class="timer-panel__ring-container">
+        <svg class="timer-panel__ring" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="90" class="timer-ring-bg"/>
+          <circle cx="100" cy="100" r="90" class="timer-ring-progress" id="timerRingProgress"/>
+        </svg>
+        <div class="timer-panel__time" id="timerDisplay">25:00</div>
+        <div class="timer-panel__label" id="timerLabel">准备专注</div>
+      </div>
+      <div class="timer-panel__controls">
+        <button class="timer-panel__btn timer-panel__btn--primary" id="timerStartPause">
+          <span class="timer-btn-icon" id="timerBtnIcon">▶</span>
+          <span class="timer-btn-label" id="timerBtnLabel">开始</span>
+        </button>
+        <button class="timer-panel__btn timer-panel__btn--secondary" id="timerReset" title="重置">
+          <span class="timer-btn-icon">↺</span>
+        </button>
+      </div>
+      <div class="timer-panel__sessions" id="timerSessions"></div>
+    </div>
+  </div>
 
   <div class="panel">
     <div class="input-row">
@@ -896,6 +1224,19 @@ const clearCompletedBtn = document.getElementById('clearCompleted');
 const toggleAllBtn = document.getElementById('toggleAll');
 const filterButtons = document.querySelectorAll('.footer__filter');
 const themeToggle = document.getElementById('themeToggle');
+
+/* Timer refs */
+const timerToggle = document.getElementById('timerToggle');
+const timerPanel = document.getElementById('timerPanel');
+const timerDisplay = document.getElementById('timerDisplay');
+const timerLabel = document.getElementById('timerLabel');
+const timerRingProgress = document.getElementById('timerRingProgress');
+const timerStartPause = document.getElementById('timerStartPause');
+const timerBtnIcon = document.getElementById('timerBtnIcon');
+const timerBtnLabel = document.getElementById('timerBtnLabel');
+const timerReset = document.getElementById('timerReset');
+const timerSessions = document.getElementById('timerSessions');
+const timerModeTabs = document.querySelectorAll('.timer-panel__mode-tab');
 
 /* ── Theme ─────────────────────────────── */
 function applyTheme(t) {
@@ -1183,6 +1524,243 @@ clearCompletedBtn.addEventListener('click', clearCompleted);
 filterButtons.forEach(btn => {
   btn.addEventListener('click', () => setFilter(btn.dataset.filter));
 });
+
+/* ── Pomodoro Timer ────────────────────── */
+const TIMER_STORAGE_KEY = 'todo_timer_v1';
+const TIMER_MODES = {
+  focus: { label: '专注', minutes: 25 },
+  shortBreak: { label: '短休', minutes: 5 },
+  longBreak: { label: '长休', minutes: 15 },
+};
+
+const RING_CIRCUMFERENCE = 2 * Math.PI * 90;
+const MINI_RING_CIRCUMFERENCE = 2 * Math.PI * 17;
+
+let timerData = { mode: 'focus', endTime: null, remaining: null, sessions: 0 };
+let timerInterval = null;
+let timerPanelVisible = false;
+
+function loadTimerState() {
+  try {
+    const raw = localStorage.getItem(TIMER_STORAGE_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      timerData.mode = p.mode || 'focus';
+      timerData.endTime = p.endTime || null;
+      timerData.remaining = p.remaining || null;
+      timerData.sessions = p.sessions || 0;
+    }
+  } catch (_) {}
+}
+
+function saveTimerState() {
+  localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify({
+    mode: timerData.mode, endTime: timerData.endTime,
+    remaining: timerData.remaining, sessions: timerData.sessions,
+  }));
+}
+
+function getTimerTotal() {
+  const m = TIMER_MODES[timerData.mode];
+  return m ? m.minutes * 60 : 25 * 60;
+}
+
+function getRemaining() {
+  if (timerData.endTime && timerData.remaining === null) {
+    return Math.max(0, Math.ceil((timerData.endTime - Date.now()) / 1000));
+  }
+  if (timerData.remaining !== null) return timerData.remaining;
+  return getTimerTotal();
+}
+
+function isRunning() {
+  return timerData.endTime !== null && timerData.remaining === null;
+}
+
+function isPaused() {
+  return timerData.remaining !== null;
+}
+
+function updateTimerToggle() {
+  if (isRunning()) {
+    timerToggle.classList.add('timer-toggle--running');
+    if (!timerToggle.querySelector('.timer-toggle-ring')) {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.classList.add('timer-toggle-ring');
+      svg.setAttribute('viewBox', '0 0 38 38');
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', '19'); c.setAttribute('cy', '19'); c.setAttribute('r', '17');
+      svg.appendChild(c);
+      timerToggle.appendChild(svg);
+    }
+    const frac = getRemaining() / getTimerTotal();
+    timerToggle.querySelector('.timer-toggle-ring circle').style.strokeDashoffset = MINI_RING_CIRCUMFERENCE * (1 - frac);
+  } else {
+    timerToggle.classList.remove('timer-toggle--running');
+    const ring = timerToggle.querySelector('.timer-toggle-ring');
+    if (ring) ring.remove();
+  }
+}
+
+function updateTimerDisplay() {
+  const rem = getRemaining();
+  const total = getTimerTotal();
+  const m = Math.floor(rem / 60);
+  const s = rem % 60;
+  timerDisplay.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+  const frac = 1 - (rem / total);
+  timerRingProgress.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - frac);
+
+  const prefix = (isRunning() || isPaused()) ? `${timerDisplay.textContent} · ` : '';
+  document.title = `${prefix}Todo · 待办`;
+
+  if (isRunning()) {
+    timerBtnIcon.textContent = '⏸'; timerBtnLabel.textContent = '暂停';
+    timerLabel.textContent = `${TIMER_MODES[timerData.mode].label}中…`;
+  } else if (isPaused()) {
+    timerBtnIcon.textContent = '▶'; timerBtnLabel.textContent = '继续';
+    timerLabel.textContent = '已暂停';
+  } else {
+    timerBtnIcon.textContent = '▶'; timerBtnLabel.textContent = '开始';
+    timerLabel.textContent = `准备${TIMER_MODES[timerData.mode].label}`;
+  }
+  updateTimerToggle();
+}
+
+function updateModeTabsUI() {
+  timerModeTabs.forEach(tab => {
+    tab.classList.toggle('timer-panel__mode-tab--active', tab.dataset.mode === timerData.mode);
+  });
+}
+
+function renderSessions() {
+  const n = timerData.sessions;
+  if (n === 0) { timerSessions.innerHTML = ''; return; }
+  const show = Math.min(n, 8);
+  let html = '';
+  for (let i = 0; i < show; i++) html += '<span class="done">🍅</span>';
+  if (n > 8) html += ` <span class="done" style="font-family:var(--font-mono);font-size:0.7rem;opacity:1;">×${n}</span>`;
+  timerSessions.innerHTML = html;
+}
+
+function resetTimer(mode) {
+  if (mode) timerData.mode = mode;
+  timerData.endTime = null;
+  timerData.remaining = null;
+  saveTimerState();
+  updateModeTabsUI();
+  updateTimerDisplay();
+  renderSessions();
+  timerPanel.classList.remove('timer-panel--complete');
+}
+
+function startTimer() {
+  timerData.endTime = Date.now() + getRemaining() * 1000;
+  timerData.remaining = null;
+  saveTimerState();
+  updateTimerDisplay();
+  startInterval();
+  timerPanel.classList.remove('timer-panel--complete');
+}
+
+function pauseTimer() {
+  timerData.remaining = getRemaining();
+  timerData.endTime = null;
+  saveTimerState();
+  updateTimerDisplay();
+  stopInterval();
+}
+
+function toggleTimer() {
+  if (isRunning()) pauseTimer(); else startTimer();
+}
+
+function startInterval() {
+  stopInterval();
+  timerInterval = setInterval(() => {
+    updateTimerDisplay();
+    if (getRemaining() <= 0) onComplete();
+  }, 200);
+}
+
+function stopInterval() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function onComplete() {
+  stopInterval();
+  timerData.endTime = null;
+  timerData.remaining = null;
+  playBeep();
+  timerPanel.classList.add('timer-panel--complete');
+  setTimeout(() => timerPanel.classList.remove('timer-panel--complete'), 2200);
+
+  if (timerData.mode === 'focus') {
+    timerData.sessions++;
+    timerData.mode = timerData.sessions % 4 === 0 ? 'longBreak' : 'shortBreak';
+  } else {
+    timerData.mode = 'focus';
+  }
+  saveTimerState();
+  updateModeTabsUI();
+  updateTimerDisplay();
+  renderSessions();
+}
+
+function playBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [880, 1100, 1320].forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine'; osc.frequency.value = f;
+      const t = ctx.currentTime + i * 0.2;
+      gain.gain.setValueAtTime(0.25, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+      osc.start(t); osc.stop(t + 0.25);
+    });
+  } catch (_) {}
+}
+
+function switchMode(mode) {
+  if (isRunning() && !confirm('切换模式将重置当前计时，确定吗？')) return;
+  resetTimer(mode);
+}
+
+function toggleTimerPanel() {
+  if (timerPanelVisible) {
+    timerPanel.classList.add('timer-panel--hiding');
+    timerPanel.addEventListener('animationend', function h() {
+      timerPanel.removeEventListener('animationend', h);
+      timerPanel.style.display = 'none';
+      timerPanel.classList.remove('timer-panel--hiding');
+    });
+    timerPanelVisible = false;
+  } else {
+    timerPanel.style.display = '';
+    timerPanelVisible = true;
+  }
+}
+
+timerToggle.addEventListener('click', toggleTimerPanel);
+timerStartPause.addEventListener('click', toggleTimer);
+timerReset.addEventListener('click', () => resetTimer());
+timerModeTabs.forEach(tab => {
+  tab.addEventListener('click', () => switchMode(tab.dataset.mode));
+});
+
+/* ── Timer Init ─────────────────────────── */
+loadTimerState();
+updateModeTabsUI();
+renderSessions();
+if (isRunning() && getRemaining() <= 0) {
+  onComplete();
+} else {
+  updateTimerDisplay();
+  if (isRunning()) startInterval();
+}
 
 /* ── Init ──────────────────────────────── */
 load();
